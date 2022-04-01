@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">College Mobile S6</string>
+
+    <string-array name="os">
+        <item>Android</item>
+        <item>Windows</item>
+        <item>IOS</item>
+        <item>Linux</item>
+        <item>Symbian</item>
+        <item>MacOS</item>
+    </string-array>
 </resources>
