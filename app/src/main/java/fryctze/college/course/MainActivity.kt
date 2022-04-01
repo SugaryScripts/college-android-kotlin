@@ -3,6 +3,7 @@ package fryctze.college.course
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import fryctze.college.course.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -34,5 +35,14 @@ class MainActivity : AppCompatActivity() {
         binding.opsys.adapter = adapter
 
         item.add("Linux")
+
+        // list doesn't recognize xml on click
+        // solution is must from java/kotlin code
+        binding.opsys.setOnItemClickListener { adapterView, view, i, l ->
+            Toast.makeText(
+                this,
+                "Hello clicked $i",
+                Toast.LENGTH_SHORT
+            ).show() }
     }
 }
