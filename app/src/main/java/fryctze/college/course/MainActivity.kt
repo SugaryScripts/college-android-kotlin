@@ -5,10 +5,29 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import fryctze.college.course.databinding.ActivityMainBinding
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
+    private val WORDS = arrayOf(
+        "contract", "a binding agreement that enforceable by law",
+        "assurance", "a binding agreement to do or give or refrain from something",
+        "determine", "find out or learn with certainty, as by making an inquiry",
+        "engage", "consume on one's attention or time",
+        "establish", "set up or found",
+        "provision", "the activity of supplying something",
+        "resolve", "find a solution or answer",
+        "specific", "state explicitly or in detail",
+        "assure", "inform positively and with cerainty and confidence",
+        "cancel", "declare null or void",
+        "cancelled", "no longer planned or scheduled",
+        "obligation", "the state of being bound to do or pay something",
+    )
 
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var dictionary: HashMap<String, String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,7 +36,44 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        loadList()
+        letsPlay()
+    }
+
+    private fun letsPlay() {
+        val words = ArrayList<String>()
+        // fill the dictionary
+        dictionary = HashMap<String, String>()
+        for (i in WORDS.indices step 2) {
+            words.add(WORDS[i])
+            dictionary[WORDS[i]] = WORDS[i+1]
+        }
+
+        words.shuffle()
+
+        val question = words[0]
+        binding.tvQuestion.text = question
+
+        val answerChoices = ArrayList<String>()
+        for (i in 0..5){
+            dictionary[words[i]]?.let { answerChoices.add(it) }
+        }
+
+        answerChoices.shuffle()
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, answerChoices)
+
+        binding.opsys.adapter = adapter
+
+        binding.opsys.setOnItemClickListener { adapterView, view, i, l ->
+            val clicked = answerChoices[i]
+            val rightAnswer = dictionary[question]
+
+            when (clicked) {
+                rightAnswer -> Toast.makeText(applicationContext, "Jawaban benar!!", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(applicationContext, "salah", Toast.LENGTH_SHORT).show()
+            }
+            letsPlay()
+        }
     }
 
     private fun loadList() {
