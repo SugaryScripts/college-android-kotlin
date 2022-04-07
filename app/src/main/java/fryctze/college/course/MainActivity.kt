@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var dictionary: HashMap<String, String>
+    private lateinit var words: ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,19 +36,42 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
+        readFromFile()
+        //readFromCode()
         letsPlay()
     }
 
-    private fun letsPlay() {
-        val words = ArrayList<String>()
+    private fun readFromFile() {
+        words = ArrayList<String>()
+        dictionary = HashMap<String, String>()
+
+        val scan: Scanner = Scanner(resources.openRawResource(R.raw.vocab))
+        while (scan.hasNextLine()){
+            val line: String = scan.nextLine()
+            val t = line.split("\t").toTypedArray()
+            // t[0] = acceptance
+            // t[1] = state of being okay with something or someone
+
+            if (t.size >= 2) {
+                val word = t[0]
+                val def = t[1]
+                words.add(word)
+                dictionary[word] = def
+            }
+        }
+    }
+
+    private fun readFromCode() {
+        words = ArrayList<String>()
         // fill the dictionary
         dictionary = HashMap<String, String>()
         for (i in WORDS.indices step 2) {
             words.add(WORDS[i])
             dictionary[WORDS[i]] = WORDS[i+1]
         }
+    }
 
+    private fun letsPlay() {
         words.shuffle()
 
         val question = words[0]
