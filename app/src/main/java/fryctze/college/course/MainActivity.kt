@@ -2,6 +2,8 @@ package fryctze.college.course
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import fryctze.college.course.databinding.ActivityMainBinding
@@ -29,12 +31,20 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var dictionary: HashMap<String, String>
     private lateinit var words: ArrayList<String>
+    private lateinit var question: String
+    private lateinit var answerChoices: ArrayList<String>
+
+    private val TAG = "state (^_^)"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
+
+        Log.d(TAG, "onCreate: dipanggil")
+
+
         setContentView(view)
         readFromFile()
         //readFromCode()
@@ -46,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         dictionary = HashMap<String, String>()
 
         val scan: Scanner = Scanner(resources.openRawResource(R.raw.vocab))
-        while (scan.hasNextLine()){
+        while (scan.hasNextLine()) {
             val line: String = scan.nextLine()
             val t = line.split("\t").toTypedArray()
             // t[0] = acceptance
@@ -74,30 +84,17 @@ class MainActivity : AppCompatActivity() {
     private fun letsPlay() {
         words.shuffle()
 
-        val question = words[0]
+        question = words[0]
         binding.tvQuestion.text = question
 
-        val answerChoices = ArrayList<String>()
+        answerChoices = ArrayList<String>()
         for (i in 0..5){
             dictionary[words[i]]?.let { answerChoices.add(it) }
         }
 
         answerChoices.shuffle()
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, answerChoices)
-
-        binding.opsys.adapter = adapter
-
-        binding.opsys.setOnItemClickListener { adapterView, view, i, l ->
-            val clicked = answerChoices[i]
-            val rightAnswer = dictionary[question]
-
-            when (clicked) {
-                rightAnswer -> Toast.makeText(applicationContext, "Jawaban benar!!", Toast.LENGTH_SHORT).show()
-                else -> Toast.makeText(applicationContext, "salah", Toast.LENGTH_SHORT).show()
-            }
-            letsPlay()
-        }
+        showQuestionAnswer()
     }
 
     private fun loadList() {
@@ -124,5 +121,43 @@ class MainActivity : AppCompatActivity() {
                 "Hello clicked $i",
                 Toast.LENGTH_SHORT
             ).show() }
+    }
+
+    private fun showQuestionAnswer() {
+        // show question
+        binding.tvQuestion.text = question
+
+        // show answers
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, answerChoices)
+
+        binding.opsys.adapter = adapter
+
+        binding.opsys.setOnItemClickListener { adapterView, view, i, l ->
+            val clicked = answerChoices[i]
+            val rightAnswer = dictionary[question]
+
+            when (clicked) {
+                rightAnswer -> Toast.makeText(applicationContext, "Jawaban benar!!", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(applicationContext, "salah", Toast.LENGTH_SHORT).show()
+            }
+            letsPlay()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("question_origin", question)
+        outState.putStringArrayList("answer_options_origin", answerChoices)
+
+        Log.d(TAG, "onSaveInstanceState: dipanggil")
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        question = savedInstanceState.getString("question_origin").toString()
+        answerChoices = savedInstanceState.getStringArrayList("answer_options_origin") as ArrayList<String>;
+        showQuestionAnswer()
+
+        Log.d(TAG, "onRestoreInstanceState: dipanggil")
     }
 }
