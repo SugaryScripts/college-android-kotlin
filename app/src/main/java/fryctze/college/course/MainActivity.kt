@@ -2,7 +2,6 @@ package fryctze.college.course
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -38,17 +37,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
 
         Log.d(TAG, "onCreate: dipanggil")
 
+        val firstQuestion = intent.getStringExtra("question")
 
         setContentView(view)
         readFromFile()
         //readFromCode()
-        letsPlay()
+        letsPlay(firstQuestion)
     }
 
     private fun readFromFile() {
@@ -81,16 +80,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun letsPlay() {
+    private fun letsPlay(firstQuestion: String?) {
         words.shuffle()
 
-        question = words[0]
+        question = firstQuestion ?: words[0]
         binding.tvQuestion.text = question
 
         answerChoices = ArrayList<String>()
         for (i in 0..5){
             dictionary[words[i]]?.let { answerChoices.add(it) }
         }
+
+        if (firstQuestion != null)
+            answerChoices[0] = dictionary[firstQuestion].toString()
 
         answerChoices.shuffle()
 
@@ -140,7 +142,7 @@ class MainActivity : AppCompatActivity() {
                 rightAnswer -> Toast.makeText(applicationContext, "Jawaban benar!!", Toast.LENGTH_SHORT).show()
                 else -> Toast.makeText(applicationContext, "salah", Toast.LENGTH_SHORT).show()
             }
-            letsPlay()
+            letsPlay(null)
         }
     }
 
@@ -155,7 +157,7 @@ class MainActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         question = savedInstanceState.getString("question_origin").toString()
-        answerChoices = savedInstanceState.getStringArrayList("answer_options_origin") as ArrayList<String>;
+        answerChoices = savedInstanceState.getStringArrayList("answer_options_origin") as ArrayList<String>
         showQuestionAnswer()
 
         Log.d(TAG, "onRestoreInstanceState: dipanggil")

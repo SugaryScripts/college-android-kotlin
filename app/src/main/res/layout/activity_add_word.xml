@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="32dp"
+    tools:context=".AddWordActivity">
+
+    <EditText
+        android:id="@+id/et_new_word"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="masukan kata baru"/>
+
+    <EditText
+        android:id="@+id/et_new_def"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="masukan definisi" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Simpan"
+        android:onClick="saveClick" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
