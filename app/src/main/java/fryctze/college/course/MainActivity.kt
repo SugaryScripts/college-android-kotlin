@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import fryctze.college.course.databinding.ActivityMainBinding
+import java.io.File
+import java.io.FileInputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -46,8 +48,29 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(view)
         readFromFile()
+        readCreatedFile()
+        Log.d(TAG, "onCreate: last added ${words[words.size-1]} and the def ${dictionary[words[words.size-1]]}")
+        Toast.makeText(this, "onCreate: last added ${words[words.size-1]} and the def ${dictionary[words[words.size-1]]}", Toast.LENGTH_SHORT).show()
         //readFromCode()
         letsPlay(firstQuestion)
+    }
+
+    private fun readCreatedFile() {
+        val path = applicationContext.filesDir
+        val readFrom = File(path, "file.txt")
+        val content = ByteArray(readFrom.length().toInt())
+
+        val stream = FileInputStream(readFrom)
+        stream.read(content)
+        val original = String(content)
+        Log.d(TAG, "readFullFile: $original")
+        val t = original.split("\t").toTypedArray()
+        if (t.size > 1){
+            words.add(t[0])
+            dictionary[t[0]] = t[1]
+            Log.d(TAG, "readCreatedFile: $t")
+            Log.d(TAG, "readCreatedFile: Added word:${t[0]} dictionary:${t[1]}")
+        }
     }
 
     private fun readFromFile() {
